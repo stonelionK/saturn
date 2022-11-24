@@ -1,0 +1,86 @@
+[acp@iap01 youngdoo-kim]$ cat README.txt 
+-------------------------------------------------------------------------------------
+
+# execute.sh 스크립트는 openjdk:11 Pod 내부 환경으로 연결시켜줌
+# file_copy.sh 스크립트는 현재 디렉토리 파일을 Pod 내부 환경으로 복사시켜줌
+
+## <example>
+## [acp@iap01 youngdoo-kim]$ ./execute.sh
+## root@test-java-env-7fb746dcb6-hgrsr:/#
+
+## <example>
+## [acp@iap01 youngdoo-kim]$ ./file_copy.sh <FILE NAME>
+## --> java 환경 pod의 / 디렉토리로 파일이 복사됨
+
+
+-------------------------------------------------------------------------------------
+
+## PostgreSQL 접속 방법
+
+# 1. 커맨드라인 -  다음 커맨드 참고 (ID/PW: acp/acp!@34)
+[acp@iap01 ~]$ k get po -n youngdoo-kim
+NAME                             READY   STATUS    RESTARTS   AGE
+postgresql-client                1/1     Running   0          4d22h
+test-java-env-7fb746dcb6-hgrsr   1/1     Running   0          4d22h
+
+ydk-rbmq-server-0                1/1     Running   0          4m3s
+ydk-rbmq-server-1                1/1     Running   0          3m38s
+ydk-rbmq-server-2                1/1     Running   0          3m12s
+
+[acp@iap01 ~]$ k exec -it postgresql-client -n youngdoo-kim -- sh
+~ $ psql -h youngdoo-kim-psql.pgo.svc.cluster.local -p 5432 -U acp youngdoo-kim-psql
+Password for user acp:
+psql (13.3, server 12.4)
+Type "help" for help.
+
+youngdoo-kim-psql=>
+
+# 2. 대시보드 접속(pgAdmin)
+# 접속 url: http://api.acp.kt.co.kr:31611 (사외망only)
+# ID/PW: acp/acp!@34
+
+
+-------------------------------------------------------------------------------------
+
+## RabbitMQ 접속 방법 
+
+# 1. 커맨드라인 - 다음 커맨드 참고
+[acp@iap01 ~]$ k get po -n youngdoo-kim
+NAME                             READY   STATUS    RESTARTS   AGE
+postgresql-client                1/1     Running   0          4d23h
+test-java-env-7fb746dcb6-hgrsr   1/1     Running   0          4d23h
+ydk-rbmq-server-0                1/1     Running   0          12m
+ydk-rbmq-server-1                1/1     Running   0          12m
+ydk-rbmq-server-2                1/1     Running   0          11m
+
+[acp@iap01 ~]$ k exec -it ydk-rbmq-server-0 -n youngdoo-kim -- bash
+rabbitmq@ydk-rbmq-server-0:/$ rabbitmqctl --help
+
+Usage
+
+rabbitmqctl [--node <node>] [--timeout <timeout>] [--longnames] [--quiet] <command> [<command options>]
+
+Available commands:
+
+...
+
+rabbitmq@ydk-rbmq-server-0:/$ rabbitmqctl version
+3.8.9
+
+# 2. 대시보드 접속(RabbitMQ Management)
+# 접속 url: http://api.acp.kt.co.kr:32541 (사외망 only)
+# ID/PW: acp/acp!@34
+
+
+*pod 속성정보 확인, port
+NAME                             READY   STATUS    RESTARTS   AGE     IP             NODE    NOMINATED NODE   READINESS GATES
+postgresql-client                1/1     Running   3          7d22h   10.244.4.73    iap10   <none>           <none>
+test-java-env-7fb746dcb6-hgrsr   1/1     Running   3          7d22h   10.244.4.80    iap10   <none>           <none>
+ydk-rbmq-server-0                1/1     Running   5          2d23h   10.244.4.91    iap10   <none>           <none>
+ydk-rbmq-server-1                1/1     Running   0          2d23h   10.244.9.27    iap13   <none>           <none>
+ydk-rbmq-server-2                1/1     Running   0          2d23h   10.244.3.193   iap11   <none>           <none>
+[acp@iap01 ~]$ k get service -n youngdoo-kim -o wide
+NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                         AGE     SELECTOR
+test-java-env    NodePort    10.96.180.243   <none>        21111:30248/TCP                                 7d22h   app=test-java-env
+ydk-rbmq         NodePort    10.103.50.2     <none>        5672:31570/TCP,15672:32541/TCP,1883:30010/TCP   3d      app.kubernetes.io/name=ydk-rbmq
+ydk-rbmq-nodes   ClusterIP   None            <none>        4369/TCP,25672/TCP                              3d      app.kubernetes.io/name=ydk-rbmq
