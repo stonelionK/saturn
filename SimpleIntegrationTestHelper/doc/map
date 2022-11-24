@@ -1,9 +1,0 @@
-cp 4-4M_QAT_editor.json    QAT_01F_04M_editor.json
-cp 4-4M_QAT_keepout.pgm    QAT_01F_04M_keepout.pgm
-cp 4-4M_QAT_keepout.yaml   QAT_01F_04M_keepout.yaml
-cp 4-4M_QAT_label.json     QAT_01F_04M_label.json
-cp 4-4M_QAT_original.pgm   QAT_01F_04M_original.pgm
-cp 4-4M_QAT_original.yaml  QAT_01F_04M_original.yaml
-cp 4-4M_QAT.pgm            QAT_01F_04M.pgm
-cp 4-4M_QAT.yaml           QAT_01F_04M.yaml
-cp 4-4M_QAT_zone.json      QAT_01F_04M_zone.json
